@@ -1,6 +1,4 @@
 A Todo List Application
 
 Developers
-@Jome
-@Flair
-@JC
+@Jome @Flair @JC
