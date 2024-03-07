@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sakura.todolist.model.Task;
 import com.sakura.todolist.service.TaskUpdateService;
-import com.sakura.todolist.service.TaskService;
+import com.sakura.todolist.service.TaskSearchService;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class TaskController {
 	private TaskUpdateService taskUpdateService;
 	
 	@Autowired
-	private TaskService taskService;
+	private TaskSearchService taskService;
 
 	/**
 	 * Update details of the selected task
@@ -44,9 +44,8 @@ public class TaskController {
      *
      * @return
      */
-    @GetMapping
+    @GetMapping("/find")
     public ResponseEntity<Iterable<Task>> getAllTasks() {
-//      Iterable<Task>
     	List<Task> tasks = taskService.getAllTasks();
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }

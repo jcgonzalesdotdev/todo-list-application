@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class TaskServiceImpl implements TaskService {
+public class TaskSearchServiceImpl implements TaskSearchService {
 	
 	private final TaskRepository taskRepository;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskSearchServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
