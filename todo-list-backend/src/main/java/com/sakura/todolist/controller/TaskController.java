@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import com.sakura.todolist.model.Task;
 import com.sakura.todolist.service.TaskUpdateService;
 import com.sakura.todolist.service.TaskDeleteService;
 import com.sakura.todolist.service.TaskSearchService;
+import com.sakura.todolist.service.TaskCreateService;
 
 import java.util.List;
 
@@ -32,6 +34,8 @@ public class TaskController {
 	@Autowired
 	private TaskDeleteService taskDeleteService;
 
+	@Autowired
+	private TaskCreateService taskCreateService;
 	/**
 	 * Update details of the selected task
 	 * 
@@ -71,7 +75,7 @@ public class TaskController {
 	 * @param id
 	 * @return
 	 */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable("id") Long id) {
         taskDeleteService.deleteTask(id);
 
@@ -81,5 +85,15 @@ public class TaskController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
         
+    }
+    
+    /**
+     * Create new task
+     * 
+     * @return
+     */
+    @PostMapping("/add")
+    public Task createTask(@RequestBody Task task) {
+    	return taskCreateService.createTask(task);
     }
 }
