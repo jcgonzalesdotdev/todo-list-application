@@ -2,6 +2,7 @@ package com.sakura.todolist.service;
 
 import java.util.List;
 
+import com.sakura.todolist.exceptions.EntityNotFoundException;
 import com.sakura.todolist.model.Task;
 import com.sakura.todolist.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,13 @@ public class TaskSearchServiceImpl implements TaskSearchService {
 
 	@Override
 	public List<Task> getAllTasks() {
-		// TODO Auto-generated method stub
-		return taskRepository.findAll();
+		List<Task> searchResult = taskRepository.findAll();
+		
+		if (searchResult.isEmpty() ) {
+			throw new EntityNotFoundException("No tasks found");
+		}
+		
+		return searchResult;
 	}
 
 }
