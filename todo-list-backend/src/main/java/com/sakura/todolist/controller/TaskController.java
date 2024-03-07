@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sakura.todolist.exceptions.EntityNotFoundException;
 import com.sakura.todolist.model.Task;
 import com.sakura.todolist.service.TaskUpdateService;
 import com.sakura.todolist.service.TaskSearchService;
@@ -22,7 +23,7 @@ public class TaskController {
 
 	@Autowired
 	private TaskUpdateService taskUpdateService;
-	
+
 	@Autowired
 	private TaskSearchService taskService;
 
@@ -33,20 +34,29 @@ public class TaskController {
 	 * @param taskEntity
 	 * @return
 	 */
-	@PutMapping("/{id}")
-	public ResponseEntity<Task> updateTask(@PathVariable("id") Long id, @RequestBody Task inputTask) {
-		Task task = taskUpdateService.updateTask(id, inputTask);
-		return new ResponseEntity<>(task, HttpStatus.OK);
+	@PutMapping("/update/{id}")
+	public ResponseEntity<?> updateTask(@PathVariable("id") Long id,
+	        @RequestBody Task inputTask) {
+		
+		Task updatedTask = new Task();
+		
+		try {
+			updatedTask = taskUpdateService.updateTask(id, inputTask);
+			return new ResponseEntity<Task>(updatedTask, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+		
 	}
-	
-	 /**
-     * Get a list of all tasks
-     *
-     * @return
-     */
-    @GetMapping("/find")
-    public ResponseEntity<Iterable<Task>> getAllTasks() {
-    	List<Task> tasks = taskService.getAllTasks();
-        return new ResponseEntity<>(tasks, HttpStatus.OK);
-    }
+
+	/**
+	 * Get a list of all tasks
+	 *
+	 * @return
+	 */
+	@GetMapping("/find")
+	public ResponseEntity<Iterable<Task>> getAllTasks() {
+		List<Task> tasks = taskService.getAllTasks();
+		return new ResponseEntity<>(tasks, HttpStatus.OK);
+	}
 }
