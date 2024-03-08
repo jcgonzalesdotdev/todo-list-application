@@ -1,26 +1,30 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div id="app">
+    <HeaderSection />
+    <Task />
+  </div>
 </template>
 
+<script>
+import Task from './components/TaskInit.vue'
+import HeaderSection from './components/landing-page/header-section.vue'
+// import MainSection from './components/landing-page/main-section.vue'
+// import FooterSection from './components/landing-page/footer-section.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Task,
+    HeaderSection
+    // HeaderSection,
+    // MainSection,
+    // FooterSection
+  }
+}
+</script>
+
 <style scoped>
+
 header {
   line-height: 1.5;
   max-height: 100vh;
@@ -80,6 +84,13 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 1rem;
+  }
+
+  #app {
+    background-image: url('https://th.bing.com/th/id/OIP.fmLeWCb8UTJHF2DMEyY8lAHaEL?rs=1&pid=ImgDetMain');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
   }
 }
 </style>
