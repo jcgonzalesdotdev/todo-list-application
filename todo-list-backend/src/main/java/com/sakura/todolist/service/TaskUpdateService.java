@@ -1,7 +1,7 @@
 package com.sakura.todolist.service;
 
-import com.sakura.todolist.model.Task;
+import com.sakura.todolist.dto.TaskDto;
 
 public interface TaskUpdateService {
-	Task updateTask(Long id, Task taskEntity);
+	TaskDto updateTask(Long id, TaskDto inTaskDto);
 }

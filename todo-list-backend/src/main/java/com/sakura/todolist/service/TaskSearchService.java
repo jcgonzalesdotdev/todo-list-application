@@ -1,8 +1,9 @@
 package com.sakura.todolist.service;
 
-import com.sakura.todolist.model.Task;
 import java.util.List;
 
+import com.sakura.todolist.dto.TaskDto;
+
 public interface TaskSearchService {
-	List<Task> getAllTasks();
+	List<TaskDto> getAllTasks();
 }

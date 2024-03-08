@@ -13,11 +13,7 @@ public class TaskDeleteServiceImpl implements TaskDeleteService{
 
 	@Override
 	public void deleteTask(Long id) {
-		// TODO Auto-generated method stub
-		
 		taskRepository.deleteById(id);
-		
-		
 	}
 	
 	
