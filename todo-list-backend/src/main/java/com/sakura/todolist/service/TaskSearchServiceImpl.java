@@ -19,6 +19,7 @@ public class TaskSearchServiceImpl implements TaskSearchService {
 	/**
 	 * TaskRepository
 	 */
+	@Autowired
 	private TaskRepository taskRepository;
 
 	@Override
