@@ -16,6 +16,9 @@ import com.sakura.todolist.repository.TaskRepository;
 @Service
 public class TaskSearchServiceImpl implements TaskSearchService {
 	
+	/**
+	 * TaskRepository
+	 */
 	private final TaskRepository taskRepository;
 
     @Autowired

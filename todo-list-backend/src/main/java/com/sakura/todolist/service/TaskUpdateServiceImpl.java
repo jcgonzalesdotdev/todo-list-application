@@ -33,8 +33,9 @@ public class TaskUpdateServiceImpl implements TaskUpdateService {
 		} else {
 			throw new EntityNotFoundException("Selected task not found");
 		}
-		
-		TaskDto taskOutDto = CommonUtils.setTaskDto(taskRepository.save(taskResult.get()));
+
+		TaskDto taskOutDto = CommonUtils
+		        .setTaskDto(taskRepository.save(taskResult.get()));
 
 		return taskOutDto;
 	}

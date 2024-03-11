@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
-@CrossOrigin( origins = "http://localhost:5173")
+@CrossOrigin()
 public class TaskController {
 
 	@Autowired
@@ -78,13 +78,16 @@ public class TaskController {
 
 	/**
 	 * 
+	 * Delete task by selected task id
+	 * 
 	 * @param id
 	 * @return
 	 */
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deleteTask(@PathVariable("id") Long id) {
-		taskDeleteService.deleteTask(id);
+	public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
+		
 		try {
+			taskDeleteService.deleteTask(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -98,8 +101,8 @@ public class TaskController {
 	 * @return
 	 */
 	@PostMapping("/add")
-	public TaskDto createTask(@RequestBody TaskDto inTaskDto) {
+	public String createTask(@RequestBody TaskDto inTaskDto) {
 		TaskDto outTaskDto = taskCreateService.createTask(inTaskDto);
-		return outTaskDto;
+		return "Task with ID:" + outTaskDto.getId() + " was created successfully." ;
 	}
 }
