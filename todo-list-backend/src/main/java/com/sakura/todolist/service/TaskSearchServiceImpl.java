@@ -19,12 +19,7 @@ public class TaskSearchServiceImpl implements TaskSearchService {
 	/**
 	 * TaskRepository
 	 */
-	private final TaskRepository taskRepository;
-
-    @Autowired
-    public TaskSearchServiceImpl(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+	private TaskRepository taskRepository;
 
 	@Override
 	public List<TaskDto> getAllTasks() {
