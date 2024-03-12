@@ -1,0 +1,159 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  overflow: hidden;
+  min-height: 100vh;
+  /* ******************************************** */
+  background-image: repeating-linear-gradient(
+    0deg,
+    black,
+    1px,
+    white 1px,
+    white
+  );
+  /* ******************************************** */
+   background-size: 100% 30px;
+  background-color: white;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+}
+
+#app {
+  padding: 10px;
+  margin: 10px;
+  /* background-color: red; */
+}
+
+
+.content-wrapper {
+  /* position: relative; */
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.image-wrapper {
+  margin-top: auto;
+}
+
+.image-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+}
+
+.hover-zoom {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-zoom:hover {
+  transform: scale(1.2); /* Adjust the scale factor for desired enlargement */
+}
+
+.ruler {
+  /* height: 200px; */
+  margin-bottom: -100px;
+  margin-left: -10px;
+}
+.pin {
+  height: 300px;
+  margin-bottom: -20px;
+  margin-left: -20px;
+}
+.book {
+  height: 300px;
+  margin-bottom: -120px;
+  margin-left: -20px;
+}
+.crayon {
+  height: 350px;
+  margin-bottom: -120px;
+  margin-left: -35px;
+}
+.calendar {
+  height: 300px;
+  margin-bottom: -60px;
+  margin-left: -40px;
+}
+.clip {
+  height: 300px;
+  margin-bottom: -100px;
+  margin-left: -120px;
+}
+.ekis {
+  height: 120px;
+  /* margin-bottom: -40px; */
+  margin-left: -45px;
+}
+.ekis-wrapper {
+  margin-top: 270px;
+}
+
+.check1 {
+  height: 120px;
+  /* margin-bottom: -100px; */
+  margin-left: -40px;
+}
+.check1-wrapper {
+  margin-top: 130px;
+}
+
+.check2 {
+  height: 150px; /* Adjust the height of the images */
+  /* margin-bottom: -20px; */
+  margin-left: -60px;
+}
+.check2-wrapper {
+  margin-top: 260px;
+}
+
+@media screen and (max-width: 767px) {
+  .content-wrapper {
+    overflow: hidden !important;
+    justify-content: center;
+  }
+
+  .image-container {
+    align-items: flex-end;
+  }
+
+  .image-container .ruler,
+  .image-container .pin,
+  .image-container .book,
+  .image-container .crayon,
+  .image-container .clip,
+  .image-container .ekis,
+  .image-container .check1,
+  .image-container .check2 {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .content-wrapper {
+    overflow: hidden !important;
+  }
+
+  .image-container {
+    align-items: flex-end; /* idk the purpose haha*/
+  }
+
+  .image-container .ruler,
+  .image-container .pin,
+  .image-container .crayon,
+  .image-container .ekis,
+  .image-container .check1,
+  .image-container .check2 {
+    display: none;
+  }
+}
