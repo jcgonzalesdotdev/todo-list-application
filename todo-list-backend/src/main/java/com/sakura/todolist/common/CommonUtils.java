@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.util.StringUtils;
+
 import com.sakura.todolist.dto.TaskDto;
 import com.sakura.todolist.model.Task;
 
@@ -20,10 +22,10 @@ public class CommonUtils {
 	 * @return
 	 */
 	public static String dateToStringFormatterYyyyMmDd(Date date) {
-		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		 String formattedDate = CommonConstants.EMPTY;
 		 
 		 if(date != null) {
+			 SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
 			 formattedDate = formatter.format(date);
 		 }
 		 
@@ -38,14 +40,15 @@ public class CommonUtils {
 	 */
 	public static Date stringToDateFormatterYyyyMmDd(String dateString) {
 		Date date = null;
-        try {
-        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    		date = formatter.parse(dateString);
-        } catch (ParseException e) {
-            System.out.println("Parse Exception: " + e.getMessage());
-        }
-		 
-		 return date;
+		if (dateString != null && !dateString.isEmpty()) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				date = formatter.parse(dateString);
+			} catch (ParseException e) {
+				System.out.println("Parse Exception: " + e.getMessage());
+			}
+		}
+		return date;
 	}
 	
 	/**
