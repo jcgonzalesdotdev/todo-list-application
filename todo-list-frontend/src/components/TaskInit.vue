@@ -1,22 +1,33 @@
 <script>
 import TaskService from '../service/TaskService'
+import TaskCreate from '../components/TaskCreate.vue'
 import HeaderSection from './landing-page/header-section.vue'
 
 export default {
     name: 'App',
     components: {
-      HeaderSection
+      HeaderSection,
+      TaskCreate
     },
   taskName: '',
   data() {
     return {
+      taskId: '',
       tasks: []
     }
   },
   methods: {
     findTasks() {
       TaskService.findTasks().then((response) => {
+        console.log(response);
         this.tasks = response.data
+      })
+    },
+    async deleteSelectTaskById(taskId) {
+      this.taskId = taskId;
+      let selectedTaskId = BigInt(taskId);
+      await TaskService.deleteTask(selectedTaskId).then((response) => {
+        this.findTasks();
       })
     }
   },
@@ -30,6 +41,7 @@ export default {
 
   <div id="app">
     <HeaderSection />
+    <!-- <TaskCreate /> -->
   </div>
 
   <div class="container">
@@ -39,7 +51,7 @@ export default {
           <tr class="table-primary">
             <th scope="col">タスクID</th>
             <th scope="col">タイトル</th>
-            <th scope="col">内容</th>
+            <th scope="col">詳細</th>
             <th scope="col">開始日</th>
             <th scope="col">終了日</th>
             <th scope="col">ステータス</th>
@@ -59,7 +71,7 @@ export default {
               <button>更新</button>
             </td>
             <td>
-              <button>削除</button>
+              <button @click="deleteSelectTaskById(task.id)">削除</button>
             </td>
           </tr>
         </tbody>

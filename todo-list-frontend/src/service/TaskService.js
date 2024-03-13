@@ -1,10 +1,17 @@
-import axios from 'axios'
-
-const TASK_API_BASE_URL = 'http://localhost:8080/api/tasks'
+import axios from "axios";
+import http from "@/http-common";
+import { API_BASE_URL } from '@/utils/constants';
 
 class TaskService{
     findTasks(){
-        return axios.get(TASK_API_BASE_URL + '/find');
+        return http.get('/find');
+    }
+    deleteTask(taskId){
+        // return axios.delete(API_BASE_URL + '/delete/', taskId);
+        return http.delete('/delete/' + taskId);
+    }
+    createTask(taskData){
+        return http.post('/add', taskData);
     }
 }
 
