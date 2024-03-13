@@ -1,20 +1,27 @@
 <script>
 import TaskService from '../service/TaskService'
 import TaskCreate from '../components/TaskCreate.vue'
-import HeaderSection from './landing-page/header-section.vue'
 
 export default {
     name: 'App',
     components: {
-      HeaderSection,
       TaskCreate
     },
   taskName: '',
   data() {
     return {
       taskId: '',
-      tasks: []
+      tasks: [],
+      searchInput: ''
     }
+  },
+  computed: {
+    filteredTasks() {
+      return this.tasks.filter(task => {
+        return task.title.toLowerCase().includes(this.searchInput.toLowerCase()) ||
+               task.description.toLowerCase().includes(this.searchInput.toLowerCase());
+      });
+    },
   },
   methods: {
     findTasks() {
@@ -38,13 +45,21 @@ export default {
 </script>
 
 <template>
-
-  <div id="app">
-    <HeaderSection />
-    <!-- <TaskCreate /> -->
-  </div>
-
   <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+      <div class="container">
+        <div class="mx-auto d-lg-flex">
+          <input
+            class="form-control mr-sm-2"
+            type="text"
+            placeholder="検索"
+            aria-label="Search"
+            v-model="searchInput"
+          />
+        </div>
+        <TaskCreate />
+      </div>
+    </nav>
     <div class="tbl-container table-responsive bdr">
       <table class="table table-hover">
         <thead class="thead-dark">
@@ -60,7 +75,7 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="task in tasks" :key="task.id">
+          <tr v-for="task in filteredTasks" :key="task.id">
             <td>{{ task.id }}</td>
             <td>{{ task.title }}</td>
             <td>{{ task.description }}</td>
@@ -81,7 +96,6 @@ export default {
 </template>
 
 <style scoped>
-
 .container {
   position: relative;
   z-index: 2;
