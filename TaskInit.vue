@@ -1,106 +1,75 @@
 <script>
 import TaskService from '../service/TaskService'
 import TaskCreate from '../components/TaskCreate.vue'
+import HeaderSection from './landing-page/header-section.vue'
 import TaskModal from './modal/TaskModal.vue'
 
 export default {
-  name: 'App',
-  components: {
-    TaskCreate,
-    TaskModal
-  },
+    name: 'App',
+    components: {
+      HeaderSection,
+      TaskCreate,
+      TaskModal,
+    },
   taskName: '',
   data() {
     return {
-      taskId: '',
       tasks: [],
-      searchInput: '',
       formData: {
         title: '',
         description: '',
         start_date: '',
         end_date: '',
-        status: ''
+        status:'',
       },
       modalActive: true
     }
   },
   computed: {
-    filteredTasks() {
-      return this.tasks.filter((task) => {
-        // Ensure task is not null or undefined
-        if (!task) return false
-
-        // Convert all properties to strings and apply .toLowerCase()
-        const title = task.title ? task.title.toString().toLowerCase() : ''
-        const description = task.description ? task.description.toString().toLowerCase() : ''
-        const start_date = task.start_date ? task.start_date.toString().toLowerCase() : ''
-        const end_date = task.end_date ? task.end_date.toString().toLowerCase() : ''
-        const status = task.status ? task.status.toString().toLowerCase() : ''
-
-        // Check if any of the properties contain the search input
-        return (
-          title.includes(this.searchInput.toLowerCase()) ||
-          description.includes(this.searchInput.toLowerCase()) ||
-          start_date.includes(this.searchInput.toLowerCase()) ||
-          end_date.includes(this.searchInput.toLowerCase()) ||
-          status.includes(this.searchInput.toLowerCase())
-        )
-      })
-    },
-    modalActive() {
+    modalActive(){
       return !this.modalActive
     }
   },
   methods: {
     findTasks() {
       TaskService.findTasks().then((response) => {
-        console.log(response)
+        console.log(response);
         this.tasks = response.data
       })
     },
     async deleteSelectTaskById(taskId) {
-      this.taskId = taskId
-      let selectedTaskId = BigInt(taskId)
+      this.taskId = taskId;
+      let selectedTaskId = BigInt(taskId);
       await TaskService.deleteTask(selectedTaskId).then((response) => {
-        this.findTasks()
+        this.findTasks();
       })
     },
     async createTask() {
       await TaskService.createTask(this.formData).then((response) => {
         // console.log(response);
-        this.modalActive = false
-        this.findTasks()
+        this.modalActive = false;
+        this.findTasks();
         // window.location.reload(); // Reload the page
         // this.$router.push('/other-link'); // Navigate to '/other-link'
       })
     },
     modalCheck() {
-      this.modalActive = !this.modalActive
+      this.modalActive = !this.modalActive;
     }
   },
   created() {
     this.findTasks()
-  }
+  },
 }
 </script>
 
 <template>
+  <div id="app">
+    <HeaderSection />
+    <!-- <TaskCreate /> -->
+  </div>
+
   <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-      <div class="container">
-        <div class="mx-auto d-lg-flex">
-          <input
-            class="form-control mr-sm-2"
-            type="text"
-            placeholder="検索"
-            aria-label="Search"
-            v-model="searchInput"
-          />
-        </div>
-        <TaskCreate @click="modalCheck" a />
-      </div>
-    </nav>
     <div class="tbl-container table-responsive bdr">
       <table class="table table-hover">
         <thead class="thead-dark">
@@ -116,7 +85,7 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="task in filteredTasks" :key="task.id">
+          <tr v-for="task in tasks" :key="task.id">
             <td>{{ task.id }}</td>
             <td>{{ task.title }}</td>
             <td>{{ task.description }}</td>
@@ -124,7 +93,7 @@ export default {
             <td>{{ task.end_date }}</td>
             <td>{{ task.status }}</td>
             <td>
-              <button @click="modalCheck">更新</button>
+              <button  @click="modalCheck">更新</button>
             </td>
             <td>
               <button @click="deleteSelectTaskById(task.id)">削除</button>
@@ -165,26 +134,16 @@ export default {
                   class="input-endD"
                 />
               </div>
-              <!-- status checkbox -->
-              <div class="checkbox-wrapper">
-                <input checked="" type="checkbox" class="check" id="check1-61" v-model="formData.status" />
-                <label for="check1-61" class="label">
-                  <svg width="45" height="45" viewBox="0 0 95 95">
-                    <rect x="30" y="20" width="50" height="50" stroke="black" fill="none"></rect>
-                    <g transform="translate(0,-952.36222)">
-                      <path
-                        d="m 56,963 c -102,122 6,9 7,9 17,-5 -66,69 -38,52 122,-77 -7,14 18,4 29,-11 45,-43 23,-4"
-                        stroke="black"
-                        stroke-width="3"
-                        fill="none"
-                        class="path1"
-                      ></path>
-                    </g>
-                  </svg>
-                  <span>Task Completed?</span>
+              <div class="checkbox-container">
+                <input type="checkbox" id="cbx2" style="display: none;">
+                <label for="cbx2" class="check">
+                    <svg width="18px" height="18px" viewBox="0 0 18 18">
+                        <path d="M 1 9 L 1 9 c 0 -5 3 -8 8 -8 L 9 1 C 14 1 17 5 17 9 L 17 9 c 0 4 -4 8 -8 8 L 9 17 C 5 17 1 14 1 9 L 1 9 Z"></path>
+                        <polyline points="1 9 7 14 15 4"></polyline>
+                    </svg>
                 </label>
-              </div>
-              <div class="form-button">
+            </div>
+            <div class="form-button">
                 <button class="button-save" type="submit" @click="createTask">Save</button>
                 <button class="button-cancel" type="reset" @click="modalCheck">Cancel</button>
               </div>
@@ -265,6 +224,7 @@ table {
   overflow: hidden;
 }
 
+/* Modal Style */
 /* Styles for the modal */
 .modal {
   display: block;
@@ -359,51 +319,5 @@ table {
 textarea {
   height: 100px;
   resize: none;
-}
-
-/* Status Checkbox */
-.checkbox-wrapper input[type="checkbox"] {
-  visibility: hidden;
-  display: none;
-}
-
-.checkbox-wrapper *,
-  .checkbox-wrapper ::after,
-  .checkbox-wrapper ::before {
-  box-sizing: border-box;
-  user-select: none;
-}
-
-.checkbox-wrapper {
-  position: relative;
-  display: block;
-  overflow: hidden;
-}
-
-.checkbox-wrapper .label {
-  cursor: pointer;
-}
-
-.checkbox-wrapper .check {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  opacity: 0;
-}
-
-.checkbox-wrapper .label svg {
-  vertical-align: middle;
-}
-
-.checkbox-wrapper .path1 {
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  transition: .5s stroke-dashoffset;
-  opacity: 0;
-}
-
-.checkbox-wrapper .check:checked + label svg g path {
-  stroke-dashoffset: 0;
-  opacity: 1;
 }
 </style>

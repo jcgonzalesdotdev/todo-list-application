@@ -7,18 +7,12 @@
 }
 
 body {
-  overflow: hidden !important;
+  overflow: hidden;
   min-height: 100vh;
   /* ******************************************** */
-  background-image: repeating-linear-gradient(
-    0deg,
-    black,
-    1px,
-    white 1px,
-    white
-  );
+  background-image: repeating-linear-gradient(0deg, black, 1px, white 1px, white);
   /* ******************************************** */
-   background-size: 100% 30px;
+  background-size: 100% 30px;
   background-color: white;
   transition:
     color 0.5s,
@@ -30,7 +24,6 @@ body {
   margin: 10px;
   /* background-color: red; */
 }
-
 
 .content-wrapper {
   /* position: relative; */
@@ -48,8 +41,8 @@ body {
   width: 100%;
   display: flex;
   left: 50%;
-    transform: translateX(-50%);
-    justify-content: center;
+  transform: translateX(-50%);
+  justify-content: center;
 }
 
 .hover-zoom {
