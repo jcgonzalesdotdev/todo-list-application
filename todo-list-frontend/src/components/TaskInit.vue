@@ -16,13 +16,27 @@ export default {
     }
   },
   computed: {
-    filteredTasks() {
-      return this.tasks.filter(task => {
-        return task.title.toLowerCase().includes(this.searchInput.toLowerCase()) ||
-               task.description.toLowerCase().includes(this.searchInput.toLowerCase());
-      });
-    },
+  filteredTasks() {
+    return this.tasks.filter(task => {
+      // Ensure task is not null or undefined
+      if (!task) return false;
+
+      // Convert all properties to strings and apply .toLowerCase()
+      const title = task.title ? task.title.toString().toLowerCase() : '';
+      const description = task.description ? task.description.toString().toLowerCase() : '';
+      const start_date = task.start_date ? task.start_date.toString().toLowerCase() : '';
+      const end_date = task.end_date ? task.end_date.toString().toLowerCase() : '';
+      const status = task.status ? task.status.toString().toLowerCase() : '';
+
+      // Check if any of the properties contain the search input
+      return title.includes(this.searchInput.toLowerCase()) ||
+             description.includes(this.searchInput.toLowerCase()) ||
+             start_date.includes(this.searchInput.toLowerCase()) ||
+             end_date.includes(this.searchInput.toLowerCase()) ||
+             status.includes(this.searchInput.toLowerCase());
+    });
   },
+},
   methods: {
     findTasks() {
       TaskService.findTasks().then((response) => {
