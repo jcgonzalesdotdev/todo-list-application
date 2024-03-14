@@ -87,21 +87,17 @@ export default {
 
 <template>
   <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-      <div class="container">
-        <div class="mx-auto d-lg-flex">
+    <div class="tbl-container table-responsive bdr">
+      <div class="mx-auto d-lg-flex">
           <input
-            class="form-control mr-sm-2"
+            class="form-control mr-sm-2 m-2"
             type="text"
             placeholder="検索"
             aria-label="Search"
             v-model="searchInput"
           />
+          <TaskCreate class="m-2" @click="modalCheck" a />
         </div>
-        <TaskCreate @click="modalCheck" a />
-      </div>
-    </nav>
-    <div class="tbl-container table-responsive bdr">
       <table class="table table-hover">
         <thead class="thead-dark">
           <tr class="table-primary">
@@ -274,13 +270,13 @@ table {
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 20%;
