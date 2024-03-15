@@ -22,7 +22,8 @@ export default {
         end_date: '',
         status: ''
       },
-      modalActive: true
+      modalActive: true,
+      isUpdateMode: false // Flag to indicate whether it's update mode or not
     }
   },
   computed: {
@@ -66,17 +67,33 @@ export default {
         this.findTasks()
       })
     },
-    async createTask() {
-      await TaskService.createTask(this.formData).then((response) => {
-        // console.log(response);
-        this.modalActive = false
-        this.findTasks()
-        // window.location.reload(); // Reload the page
-        // this.$router.push('/other-link'); // Navigate to '/other-link'
-      })
+    modalCheck(task) {
+      if (!task) {
+        this.isUpdateMode = false; // Set create mode
+      }
+      console.log(this.isUpdateMode);
+      this.modalActive = !this.modalActive // Open modal
     },
-    modalCheck() {
-      this.modalActive = !this.modalActive
+    updateModalCheck(task) {
+      if (task) {
+        this.formData = { ...task }; // Copy task data to formData
+        this.isUpdateMode = true; // Set update mode
+      }
+      console.log(this.isUpdateMode);
+      this.modalActive = !this.modalActive // Open modal
+    },
+    async createOrUpdateTask() {
+      if (this.isUpdateMode) {
+        // Update existing task
+        await TaskService.updateTask(this.formData.id, this.formData);
+        
+      } else {
+        // Create new task
+        await TaskService.createTask(this.formData).then((response) =>{
+          this.findTasks();
+          this.modalActive = !this.modalActive // Close modal
+        });
+      }
     }
   },
   created() {
@@ -96,7 +113,8 @@ export default {
             aria-label="Search"
             v-model="searchInput"
           />
-          <TaskCreate class="m-2" @click="modalCheck" a />
+          <!-- <TaskCreate class="m-2" @click="modalCheck" a /> -->
+          <button class="m-2" @click="modalCheck">作成</button>
         </div>
       <table class="table table-hover">
         <thead class="thead-dark">
@@ -120,7 +138,7 @@ export default {
             <td>{{ task.end_date }}</td>
             <td>{{ task.status }}</td>
             <td>
-              <button @click="modalCheck">更新</button>
+              <button @click="updateModalCheck(task)">更新</button>
             </td>
             <td>
               <button @click="deleteSelectTaskById(task.id)">削除</button>
@@ -181,7 +199,7 @@ export default {
                 </label>
               </div>
               <div class="form-button">
-                <button class="button-save" type="submit" @click="createTask">Save</button>
+                <button class="button-save" type="submit" @click="createOrUpdateTask">Save</button>
                 <button class="button-cancel" type="reset" @click="modalCheck">Cancel</button>
               </div>
             </form>

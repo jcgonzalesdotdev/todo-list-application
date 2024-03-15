@@ -13,6 +13,9 @@ class TaskService{
     createTask(taskData){
         return http.post('/add', taskData);
     }
+    updateTask(taskId, taskData) {
+        return http.put('/update/' + taskId, taskData);
+    }
 }
 
 export default new TaskService()

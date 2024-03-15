@@ -1,6 +1,6 @@
 <template>
     <div class="pad">
-    <h1>TODO LIST</h1>
+    <h2>TODO LIST</h2>
     <span class="peel">
       <!-- <span class="peel-back"></span> -->
       <RouterLink to="/task">
@@ -42,16 +42,15 @@
     align-items: center; /* Center vertically */
   }
   
-  .pad h1 {
+  .pad h2 {
     font-weight: normal;
     color: #0f3960 ;
-    font-weight: normal;
     position: absolute;
     z-index: 20;
     top: 50%; /* Center vertically within the .pad */
     left: 50%; /* Center horizontally within the .pad */
     transform: translate(-50%, -50%); /* Centering trick */
-    
+    font-family: 'Indie Flower', cursive;
   }
   
   .peel {
