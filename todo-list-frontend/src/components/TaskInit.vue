@@ -1,13 +1,15 @@
 <script>
 import TaskService from '../service/TaskService'
-import TaskCreate from '../components/TaskCreate.vue'
-import TaskModal from './modal/TaskModal.vue'
+import TaskCreate from './modal/TaskCreate.vue'
+import TaskUpdate from './modal/TaskUpdate.vue'
+import TaskDelete from './modal/TaskDelete.vue'
 
 export default {
   name: 'App',
   components: {
     TaskCreate,
-    TaskModal
+    TaskUpdate,
+    TaskDelete,
   },
   taskName: '',
   data() {
@@ -15,15 +17,7 @@ export default {
       taskId: '',
       tasks: [],
       searchInput: '',
-      formData: {
-        title: '',
-        description: '',
-        start_date: '',
-        end_date: '',
-        status: ''
-      },
       modalActive: true,
-      isUpdateMode: false // Flag to indicate whether it's update mode or not
     }
   },
   computed: {
@@ -49,9 +43,7 @@ export default {
         )
       })
     },
-    modalActive() {
-      return !this.modalActive
-    }
+  
   },
   methods: {
     findTasks() {
@@ -60,40 +52,20 @@ export default {
         this.tasks = response.data
       })
     },
-    async deleteSelectTaskById(taskId) {
-      this.taskId = taskId
-      let selectedTaskId = BigInt(taskId)
-      await TaskService.deleteTask(selectedTaskId).then((response) => {
-        this.findTasks()
-      })
+    handleTaskUpdated(updatedTask) {
+      // Handle the updated task data here
+      console.log('Updated Task:', updatedTask);
+      // You might want to update tasks list or perform other actions
     },
-    modalCheck(task) {
-      if (!task) {
-        this.isUpdateMode = false; // Set create mode
-      }
-      console.log(this.isUpdateMode);
-      this.modalActive = !this.modalActive // Open modal
+    handleTaskCreated(createdTask) {
+      // Handle the updated task data here
+      console.log('Created Task:', createdTask);
+      // You might want to update tasks list or perform other actions
     },
-    updateModalCheck(task) {
-      if (task) {
-        this.formData = { ...task }; // Copy task data to formData
-        this.isUpdateMode = true; // Set update mode
-      }
-      console.log(this.isUpdateMode);
-      this.modalActive = !this.modalActive // Open modal
-    },
-    async createOrUpdateTask() {
-      if (this.isUpdateMode) {
-        // Update existing task
-        await TaskService.updateTask(this.formData.id, this.formData);
-        
-      } else {
-        // Create new task
-        await TaskService.createTask(this.formData).then((response) =>{
-          this.findTasks();
-          this.modalActive = !this.modalActive // Close modal
-        });
-      }
+    handleTaskDeleted(deletedTaskId) {
+      // Handle task deletion event
+      console.log('Task deleted:', deletedTaskId);
+      this.findTasks(); // Refresh tasks after deletion
     }
   },
   created() {
@@ -113,8 +85,7 @@ export default {
             aria-label="Search"
             v-model="searchInput"
           />
-          <!-- <TaskCreate class="m-2" @click="modalCheck" a /> -->
-          <button class="m-2" @click="modalCheck">作成</button>
+          <TaskCreate @task-created="handleTaskCreated"/>
         </div>
       <table class="table table-hover">
         <thead class="thead-dark">
@@ -138,79 +109,19 @@ export default {
             <td>{{ task.end_date }}</td>
             <td>{{ task.status }}</td>
             <td>
-              <button @click="updateModalCheck(task)">更新</button>
+              <TaskUpdate :selectedTask="task" @task-updated="handleTaskUpdated" />
             </td>
             <td>
-              <button @click="deleteSelectTaskById(task.id)">削除</button>
+              <TaskDelete :taskId="task" @task-deleted="handleTaskDeleted"/>
             </td>
           </tr>
         </tbody>
       </table>
-      <TaskModal :modalActive="modalActive" @close-modal="modalCheck">
-        <div class="modal">
-          <div class="modal-content">
-            <form action="" method="post">
-              <div class="form-input">
-                <label>Title:</label>
-                <input
-                  v-model="formData.title"
-                  type="text"
-                  placeholder="ex. Development Task"
-                  class="input-title"
-                />
-                <label>Description:</label>
-                <textarea
-                  v-model="formData.description"
-                  placeholder="Write your description here"
-                  class="input-desc"
-                ></textarea>
-                <label>Start Date:</label>
-                <input
-                  v-model="formData.start_date"
-                  type="date"
-                  placeholder="Start Date"
-                  class="input-startD"
-                />
-                <label>End Date:</label>
-                <input
-                  v-model="formData.end_date"
-                  type="date"
-                  placeholder="End Date"
-                  class="input-endD"
-                />
-              </div>
-              <!-- status checkbox -->
-              <div class="checkbox-wrapper">
-                <input checked="" type="checkbox" class="check" id="check1-61" v-model="formData.status" />
-                <label for="check1-61" class="label">
-                  <svg width="45" height="45" viewBox="0 0 95 95">
-                    <rect x="30" y="20" width="50" height="50" stroke="black" fill="none"></rect>
-                    <g transform="translate(0,-952.36222)">
-                      <path
-                        d="m 56,963 c -102,122 6,9 7,9 17,-5 -66,69 -38,52 122,-77 -7,14 18,4 29,-11 45,-43 23,-4"
-                        stroke="black"
-                        stroke-width="3"
-                        fill="none"
-                        class="path1"
-                      ></path>
-                    </g>
-                  </svg>
-                  <span>Task Completed?</span>
-                </label>
-              </div>
-              <div class="form-button">
-                <button class="button-save" type="submit" @click="createOrUpdateTask">Save</button>
-                <button class="button-cancel" type="reset" @click="modalCheck">Cancel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </TaskModal>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style> 
 .container {
   position: relative;
   z-index: 2;
@@ -279,28 +190,7 @@ table {
   overflow: hidden;
 }
 
-/* Styles for the modal */
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 20%;
-  color: black;
-}
-
+/* san gamit si close? */
 .close {
   color: #aaa;
   float: right;
@@ -314,110 +204,6 @@ table {
   text-decoration: none;
   cursor: pointer;
 }
+/* san gamit si close? */
 
-.form-input {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  width: 100%;
-}
-
-.form-button {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: 10px;
-}
-
-.button-save,
-.button-cancel {
-  margin: 5px;
-  color: #ffffff;
-  border-radius: 5px;
-  border: 1px solid transparent;
-}
-
-.button-save {
-  background-color: cornflowerblue;
-}
-
-.button-cancel {
-  background-color: crimson;
-}
-
-.input-title,
-.input-desc,
-.input-startD,
-.input-endD {
-  border: none;
-  outline: none;
-  border-radius: 10px;
-  padding: 0.3rem;
-  margin: 0.1rem;
-  background-color: #bddce3;
-  box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.3);
-  transition: 300ms ease-in-out;
-}
-
-.input-title:focus,
-.input-desc:focus,
-.input-startD:focus,
-.input-endD:focus {
-  background-color: white;
-  transform: scale(1.05);
-  box-shadow:
-    13px 13px 100px #969696,
-    -13px -13px 100px #ffffff;
-}
-
-textarea {
-  height: 100px;
-  resize: none;
-}
-
-/* Status Checkbox */
-.checkbox-wrapper input[type="checkbox"] {
-  visibility: hidden;
-  display: none;
-}
-
-.checkbox-wrapper *,
-  .checkbox-wrapper ::after,
-  .checkbox-wrapper ::before {
-  box-sizing: border-box;
-  user-select: none;
-}
-
-.checkbox-wrapper {
-  position: relative;
-  display: block;
-  overflow: hidden;
-}
-
-.checkbox-wrapper .label {
-  cursor: pointer;
-}
-
-.checkbox-wrapper .check {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  opacity: 0;
-}
-
-.checkbox-wrapper .label svg {
-  vertical-align: middle;
-}
-
-.checkbox-wrapper .path1 {
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  transition: .5s stroke-dashoffset;
-  opacity: 0;
-}
-
-.checkbox-wrapper .check:checked + label svg g path {
-  stroke-dashoffset: 0;
-  opacity: 1;
-}
 </style>
