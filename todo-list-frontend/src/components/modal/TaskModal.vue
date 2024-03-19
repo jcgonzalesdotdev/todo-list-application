@@ -8,13 +8,13 @@ defineProps({
 })
 </script>
 <template>
-    <div v-if="modalActive" >
-        <div class="modal">
-            <div class="modal-content background-color:">
-                <slot />
+        <div v-if="modalActive" class="modal">
+            <div class="modal-container">
+                <div class="modal-content">
+                    <slot />
+                </div>
             </div>
         </div>
-    </div>
 </template>
 
 <style scoped>
@@ -29,6 +29,14 @@ defineProps({
   height: 100%;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  height: 100vh; 
+  margin: 0; 
 }
 
 .modal-content {

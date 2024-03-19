@@ -52,8 +52,8 @@
                 </label>
               </div>
               <div class="form-button">
-                <button class="button-save" type="submit" @click="createTask">Save</button>
-                <button class="button-cancel" type="reset" @click="modalCheck">Cancel</button>
+                <button class="button-save" @click.prevent="createTask">Save</button>
+                <button class="button-cancel" @click="modalCheck">Cancel</button>
               </div>
             </form>
     </TaskModal>
@@ -87,17 +87,24 @@ export default {
   methods: {
     modalCheck() {
       this.modalActive = !this.modalActive;
+      this.resetValue();
     },
     async createTask() {
         await TaskService.createTask(this.formData).then((response) =>{
           this.$emit('task-created', response.data);
-          this.findTasks();
           this.modalActive = !this.modalActive
         });
+        this.resetValue();
+    },
+    resetValue() {
+      this.formData.title = '';
+      this.formData.description = '';
+      this.formData.start_date = '';
+      this.formData.end_date = '';
+      this.formData.status = '';
     }
   },
 };
-
 </script>
 
 <style>

@@ -1,6 +1,6 @@
 <template>
     <div>
-      <button class="m-2" @click="modalCheck">削除</button>
+      <button class="m-2" @click.stop="modalCheck">削除</button>
       <TaskModal :modalActive="isModalActive" @close-modal="modalCheck">
         <div>
           <p>Are you sure you want to delete this task?</p>
@@ -38,7 +38,8 @@
       },
       async deleteTask() {
         try {
-          await TaskService.deleteTask(this.formData.id).then((response) => {
+          console.log('test here: ',this.taskIdValue);
+          await TaskService.deleteTask(this.taskIdValue).then((response) => {
               this.$emit('task-deleted', response.data); // Emit event to parent component
               this.modalActive =  !this.modalActive; 
           });
@@ -51,7 +52,8 @@
     taskId: {
       handler(newVal) {
         // Update formData when selectedTask changes
-        this.formData = { ...newVal };
+        console.log('DELETE ID:', newVal);
+        this.taskIdValue = newVal;
       },
       immediate: true // Trigger on component mount
     }
@@ -60,6 +62,10 @@
   </script>
 
 <style>
+.modal-content {
+  margin-top: 10px;
+}
+
 .form-input {
   display: flex;
   flex-direction: column;
