@@ -101,8 +101,8 @@ public class TaskController {
 	 * @return
 	 */
 	@PostMapping("/add")
-	public String createTask(@RequestBody TaskDto inTaskDto) {
+	public ResponseEntity<String> createTask(@RequestBody TaskDto inTaskDto) {
 		TaskDto outTaskDto = taskCreateService.createTask(inTaskDto);
-		return "Task with ID:" + outTaskDto.getId() + " was created successfully." ;
+		return ResponseEntity.status(HttpStatus.CREATED).body("Created successfully");
 	}
 }

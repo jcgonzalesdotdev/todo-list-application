@@ -3,7 +3,7 @@ import TaskService from '../service/TaskService'
 import TaskCreate from './modal/TaskCreate.vue'
 import TaskUpdate from './modal/TaskUpdate.vue'
 import TaskDelete from './modal/TaskDelete.vue'
-// import TaskView from './modal/TaskView.vue'
+import TaskView from './modal/TaskView.vue'
 
 export default {
   name: 'App',
@@ -11,16 +11,15 @@ export default {
     TaskCreate,
     TaskUpdate,
     TaskDelete,
-    // TaskView
+    TaskView
   },
-  taskName: '',
   data() {
     return {
       taskId: '',
       tasks: [],
       searchInput: '',
       selectedTask: null, // To hold the task selected for viewing
-      showViewModal: false,
+      showViewModal: false
     }
   },
   computed: {
@@ -47,53 +46,33 @@ export default {
       })
     },
     viewModalCheck() {
-      return this.showViewModal;
+      return this.showViewModal
     }
   },
   methods: {
     findTasks() {
       TaskService.findTasks().then((response) => {
-        console.log(response)
         this.tasks = response.data
       })
     },
     handleTaskUpdated(updatedTask) {
-      console.log('Updated Task:', updatedTask);
-      this.findTasks(); 
+      this.findTasks()
     },
     handleTaskCreated(createdTask) {
-      console.log('Created Task:', createdTask);
-      this.findTasks();
+      this.findTasks()
     },
     handleTaskDeleted(response) {
-      console.log(response.status);
       //TODO: Add notification
-      this.findTasks();
+      this.findTasks()
     },
     handleTaskViewed(task) {
       this.showViewModal = !this.showViewModal;
-        // Set selectedTask when a row is clicked
-        this.selectedTask = task;
-        // this.modalActive = !this.modalActive;
-        console.log("handleTaskViewed: ");
-        console.log(this.showViewModal);
+      // Set selectedTask when a row is clicked
+      this.selectedTask = task
     },
     closeModal() {
-      this.showViewModal = false; 
-      console.log('closeModal: ' + this.showViewModal);
-    },
-    // handleTaskUpdateViewed(task) {
-    //   // This method is called when clicking on TaskUpdate
-    //   // It prevents the TaskView modal from being triggered
-    //   this.selectedTask = task;
-    //   console.log("task update viewed"+ this.selectedTask);
-    // },
-    // handleTaskDeleteViewed(task) {
-    //   // This method is called when clicking on TaskDelete
-    //   // It prevents the TaskView modal from being triggered
-    //   this.selectedTask = task;
-    //   console.log("task delete viewed"+ this.selectedTask);
-    // }
+      this.showViewModal = false
+    }
   },
   created() {
     this.findTasks()
@@ -128,23 +107,24 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr @click.stop="handleTaskViewed(task)" v-for="task in filteredTasks" :key="task.id">
-            <td>{{ task.id }}</td>
-            <td>{{ task.title }}</td>
-            <td>{{ task.description }}</td>
-            <td>{{ task.start_date }}</td>
-            <td>{{ task.end_date }}</td>
-            <td>{{ task.status }}</td>
+          <tr  v-for="task in filteredTasks" :key="task.id">
+            <td @click="handleTaskViewed(task)">{{ task.title }}</td>
+            <td @click="handleTaskViewed(task)">{{ task.description }}</td>
+            <td @click="handleTaskViewed(task)">{{ task.start_date }}</td>
+            <td @click="handleTaskViewed(task)">{{ task.end_date }}</td>
+            <td @click="handleTaskViewed(task)">{{ task.status }}</td>
             <td>
-              <TaskUpdate :selectedTask="task" @task-updated="handleTaskUpdated" @open-view="handleTaskUpdateViewed" />
+              <TaskUpdate :selectedTask="task" @task-updated="handleTaskUpdated" />
             </td>
             <td>
-              <TaskDelete :taskId="task.id" @task-deleted="handleTaskDeleted" @open-view="handleTaskDeleteViewed" />
+              <TaskDelete :taskId="task.id" @task-deleted="handleTaskDeleted" />
             </td>
           </tr>
         </tbody>
       </table>
-      <!-- <TaskView :viewModalCheck="viewModalCheck" :selectedTask="selectedTask" @task-viewed="handleTaskViewed" @close-modal="closeModal" /> -->
+      <TaskView
+        :viewModalCheck="viewModalCheck" :selectedTask="selectedTask"
+          @task-viewed="handleTaskViewed" @close-modal="closeModal" />
     </div>
   </div>
 </template>
@@ -164,17 +144,8 @@ button {
   color: #3b3b3b;
   cursor: pointer;
   display: inline-block;
-  font-family:
-    Roobert,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Helvetica,
-    Arial,
-    sans-serif,
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol';
+  font-family: Roobert, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-size: 12px !important;
   font-weight: 600;
   line-height: normal;

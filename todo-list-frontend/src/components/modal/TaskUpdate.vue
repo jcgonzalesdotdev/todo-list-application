@@ -73,9 +73,11 @@ function stringToDate(dateString) {
     let parts = dateString.split(/年|月|日/)
     let date = new Date(parts[0], parts[1] - 1, parts[2])
     // Format the date into YYYY-MM-DD format
-    formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+    formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
   }
-  return formattedDate;
+  return formattedDate
 }
 
 export default {
@@ -120,12 +122,12 @@ export default {
 
         console.log(stringStartDate)
 
-        this.formData.id = newVal.id;
-        this.formData.title = newVal.title;
-        this.formData.description = newVal.description;
-        this.formData.start_date = stringStartDate;
-        this.formData.end_date = stringEndDate;
-        this.formData.status = newVal.status;
+        this.formData.id = newVal.id
+        this.formData.title = newVal.title
+        this.formData.description = newVal.description
+        this.formData.start_date = stringStartDate
+        this.formData.end_date = stringEndDate
+        this.formData.status = newVal.status
 
         // Console log newVal
         console.log('New value:', newVal)
@@ -188,9 +190,7 @@ export default {
 .input-endD:focus {
   background-color: white;
   transform: scale(1.05);
-  box-shadow:
-    13px 13px 100px #969696,
-    -13px -13px 100px #ffffff;
+  box-shadow: 13px 13px 100px #969696, -13px -13px 100px #ffffff;
 }
 
 textarea {

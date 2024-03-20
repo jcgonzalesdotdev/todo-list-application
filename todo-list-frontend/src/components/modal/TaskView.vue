@@ -22,29 +22,6 @@ export default {
   },
   // Props receive selected task from parent component
   props: ['viewModalCheck','selectedTask'],
-  
-  // data() {
-  //   return {
-  //     formData: {
-  //       title: '',
-  //       description: '',
-  //       start_date: '', 
-  //       end_date: '',
-  //       status: ''
-  //     },
-  //     modalActive: true
-  //   };
-  // },
-  // computed: {
-  //   isModalActive() {
-  //     return !this.modalActive;
-  //   },
-  // },
-  // methods: {
-  //   modalCheck() {
-  //     this.modalActive = false;
-  //   },
-  // },
   watch: {
     selectedTask: {
       handler(newVal) {
