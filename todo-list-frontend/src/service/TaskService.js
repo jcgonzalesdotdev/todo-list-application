@@ -1,7 +1,7 @@
 import http from "@/http-common";
 
 class TaskService{
-    findTasks(){
+    init(){
         return http.get('/find');
     }
     deleteTask(taskId){
