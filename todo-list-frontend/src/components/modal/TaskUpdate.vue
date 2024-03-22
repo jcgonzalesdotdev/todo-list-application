@@ -63,25 +63,11 @@
 <script>
 import TaskService from '@/service/TaskService'
 import TaskModal from './TaskModal.vue'
-
-/**
- * Convert date string yyyy年MM月dd日 to date YYYY-MM-DD format
- */
-function stringToDate(dateString) {
-  let formattedDate = ''
-  if (dateString != '') {
-    let parts = dateString.split(/年|月|日/)
-    let date = new Date(parts[0], parts[1] - 1, parts[2])
-    // Format the date into YYYY-MM-DD format
-    formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
-  }
-  return formattedDate
-}
+import { stringToDate } from '@/utils/common'
 
 export default {
   components: {
+    TaskService,
     TaskModal
   },
   props: ['selectedTask'], // Receive selected task from parent component
@@ -120,17 +106,12 @@ export default {
         let stringStartDate = stringToDate(newVal.start_date)
         let stringEndDate = stringToDate(newVal.end_date)
 
-        console.log(stringStartDate)
-
         this.formData.id = newVal.id
         this.formData.title = newVal.title
         this.formData.description = newVal.description
         this.formData.start_date = stringStartDate
         this.formData.end_date = stringEndDate
         this.formData.status = newVal.status
-
-        // Console log newVal
-        console.log('New value:', newVal)
       },
       immediate: true // Trigger on component mount
     }

@@ -38,7 +38,6 @@
       },
       async deleteTask() {
         try {
-          console.log('test here: ',this.taskIdValue);
           await TaskService.deleteTask(this.taskIdValue).then((response) => {
               this.$emit('task-deleted', response.data); // Emit event to parent component
               this.modalActive =  !this.modalActive; 
@@ -52,7 +51,6 @@
     taskId: {
       handler(newVal) {
         // Update formData when selectedTask changes
-        console.log('DELETE ID:', newVal);
         this.taskIdValue = newVal;
       },
       immediate: true // Trigger on component mount

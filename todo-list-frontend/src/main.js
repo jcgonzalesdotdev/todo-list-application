@@ -27,9 +27,12 @@ app.directive('tooltip', {
     // Position the tooltip relative to the element
     el.addEventListener('mouseenter', function () {
       const rect = el.getBoundingClientRect()
-      tooltip.style.top = rect.top + window.pageYOffset + 'px'
-      tooltip.style.left = rect.left + 'px'
-      tooltip.style.display = 'block'
+      if(binding.value.length > 18){
+        tooltip.style.top = rect.top + window.pageYOffset + 'px'
+        tooltip.style.left = rect.left + 'px'
+        tooltip.style.display = 'block'
+      }
+      
     })
 
     el.addEventListener('mouseleave', function () {

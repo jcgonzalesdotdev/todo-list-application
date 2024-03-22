@@ -23,7 +23,7 @@ public class CommonUtils {
 		 String formattedDate = CommonConstants.EMPTY;
 		 
 		 if(date != null) {
-			 SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
+			 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			 formattedDate = formatter.format(date);
 		 }
 		 

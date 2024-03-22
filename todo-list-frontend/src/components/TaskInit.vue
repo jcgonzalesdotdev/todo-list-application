@@ -6,6 +6,7 @@ import TaskDelete from './modal/TaskDelete.vue'
 import TaskView from './modal/TaskView.vue'
 import TaskHeader from './TaskHeader.vue'
 import { SCREEN_LABELS } from '@/utils/constants'
+import { convertToJapaneseDate, convertToEnglishDate } from '@/utils/common'
 
 export default {
   name: 'App',
@@ -34,7 +35,7 @@ export default {
       showViewModal: false,
       transcript: '',
       pageSize: 5, // Number of tasks per page
-      currentPage: 1, // Current page
+      currentPage: 1 // Current page
     }
   },
   computed: {
@@ -64,19 +65,21 @@ export default {
       return this.showViewModal
     },
     totalPages() {
-      return Math.ceil(this.filteredTasks.length / this.pageSize);
+      return Math.ceil(this.filteredTasks.length / this.pageSize)
     },
     paginatedTasks() {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      return this.filteredTasks.slice(startIndex, endIndex);
+      const startIndex = (this.currentPage - 1) * this.pageSize
+      const endIndex = startIndex + this.pageSize
+      return this.filteredTasks.slice(startIndex, endIndex)
     }
   },
   methods: {
     init() {
       TaskService.init().then((response) => {
-        this.tasks = response.data
 
+        //Set response data to tasks[] data
+        this.tasks = response.data
+        //Set screen labels, default language is EN
         this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en
         this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en
         this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en
@@ -96,7 +99,12 @@ export default {
         this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_jp
         this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_jp
         this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_jp
-        searchInput.placeholder = '検索'
+        searchInput.placeholder = SCREEN_LABELS.lbl_search_jp
+
+        this.filteredTasks.forEach(task => {
+        task.start_date = convertToJapaneseDate(task.start_date);
+        task.end_date = convertToJapaneseDate(task.end_date);
+      });
       } else {
         //Set screen labels to EN
         this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en
@@ -105,8 +113,15 @@ export default {
         this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en
         this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en
         this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en
-        searchInput.placeholder = 'Search'
+        searchInput.placeholder = SCREEN_LABELS.lbl_search_en
+        this.filteredTasks.forEach(task => {
+        task.start_date = convertToEnglishDate(task.start_date);
+        task.end_date = convertToEnglishDate(task.end_date);
+      });
       }
+
+      
+      
     },
     handleTaskUpdated(updatedTask) {
       this.init()
@@ -127,14 +142,14 @@ export default {
       this.showViewModal = false
     },
     startListening() {
-      const recognition = new webkitSpeechRecognition() || new SpeechRecognition() // Create a new speech recognition instance
+      // Create a new speech recognition instance
+      const recognition = new webkitSpeechRecognition() || new SpeechRecognition()
 
       // Set the language
+      // if checkbox is not selected(false), set language to EN.
       if (this.cbLanguage === false) {
-        console.log('Language set to EN')
         recognition.lang = 'en-US'
       } else {
-        console.log('Language set to JP')
         recognition.lang = 'ja-JP'
       }
 
@@ -160,17 +175,13 @@ export default {
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
-        this.currentPage++;
+        this.currentPage++
       }
     },
     prevPage() {
       if (this.currentPage > 1) {
-        this.currentPage--;
+        this.currentPage--
       }
-    },
-    handleTaskViewed(task) {
-      console.log('View task:', task);
-      // Implement your logic for handling task view
     }
   },
   created() {
