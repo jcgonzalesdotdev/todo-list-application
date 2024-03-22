@@ -1,6 +1,6 @@
 <template>
     <div>
-      <button class="m-2" @click.stop="modalCheck">削除</button>
+      <button class="m-2" @click.stop="modalCheck"><i class="fa-solid fa-trash-can"></i></button>
       <TaskModal :modalActive="isModalActive" @close-modal="modalCheck">
         <div>
           <p>Are you sure you want to delete this task?</p>

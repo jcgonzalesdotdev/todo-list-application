@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button class="m-2" @click="modalCheck">作成</button>
+    <button class="m-2" @click="modalCheck">
+      <i class="fa-solid fa-square-plus"></i>
+    </button>
     <TaskModal :modalActive="isModalActive" @close-modal="modalCheck">
             <form>
               <div class="form-input">

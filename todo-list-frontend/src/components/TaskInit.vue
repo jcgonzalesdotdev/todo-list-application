@@ -76,8 +76,10 @@ export default {
         
       })
     },
-    handleCheckboxChange() {
-      console.log(this.cbLanguage);
+    handleLanguageChange() {
+      const searchInput = document.getElementById('searchInput');
+
+      //If true, set screen labels to JP
       if(this.cbLanguage === true){
         this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_jp;
         this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_jp;
@@ -85,13 +87,16 @@ export default {
         this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_jp;
         this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_jp;
         this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_jp;
+        searchInput.placeholder = '検索'
       } else {
+        //Set screen labels to EN
         this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en;
         this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en;
         this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en;
         this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en;
         this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en;
         this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en;
+        searchInput.placeholder = 'Search'
       }
     },
     handleTaskUpdated(updatedTask) {
@@ -143,25 +148,27 @@ export default {
 }
 </script>
 <template>
-  <div class="toggle-button-cover">
-    <div class="button r" id="button-3">
-      <input type="checkbox" class="checkbox" v-model="cbLanguage" @change="handleCheckboxChange">
-      <div class="knobs"></div>
-      <div class="layer"></div>
-    </div>
-  </div>
   <div class="container">
     <div class="tbl-container table-responsive bdr">
       <div class="mx-auto d-lg-flex">
         <input
+          id="searchInput"
           class="form-control mr-sm-2 m-2"
           type="text"
-          placeholder="検索"
+          placeholder="Search"
           aria-label="Search"
+          style="width: 80% !important"
           v-model="searchInput"
         />
-        <button @click="startListening">Start Listening</button>
+        <button class="m-2" @click="startListening">
+          <i class="fa-solid fa-microphone-lines"></i>
+        </button>
         <TaskCreate @task-created="handleTaskCreated" />
+        <div class="button r" id="button-3" style="margin-top: 13px">
+          <input type="checkbox" class="checkbox" v-model="cbLanguage" @change="handleLanguageChange">
+          <div class="knobs"></div>
+          <div class="layer"></div>
+        </div>
       </div>
       <table class="table table-hover">
         <thead class="thead-dark">
