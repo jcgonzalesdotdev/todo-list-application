@@ -32,7 +32,9 @@ export default {
       searchInput: '',
       selectedTask: null, // To hold the task selected for viewing
       showViewModal: false,
-      transcript: ''
+      transcript: '',
+      pageSize: 5, // Number of tasks per page
+      currentPage: 1, // Current page
     }
   },
   computed: {
@@ -60,6 +62,14 @@ export default {
     },
     viewModalCheck() {
       return this.showViewModal
+    },
+    totalPages() {
+      return Math.ceil(this.filteredTasks.length / this.pageSize);
+    },
+    paginatedTasks() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.filteredTasks.slice(startIndex, endIndex);
     }
   },
   methods: {
@@ -67,35 +77,34 @@ export default {
       TaskService.init().then((response) => {
         this.tasks = response.data
 
-        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en;
-        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en;
-        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en;
-        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en;
-        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en;
-        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en;
-        
+        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en
+        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en
+        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en
+        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en
+        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en
+        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en
       })
     },
     handleLanguageChange() {
-      const searchInput = document.getElementById('searchInput');
+      const searchInput = document.getElementById('searchInput')
 
       //If true, set screen labels to JP
-      if(this.cbLanguage === true){
-        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_jp;
-        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_jp;
-        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_jp;
-        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_jp;
-        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_jp;
-        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_jp;
+      if (this.cbLanguage === true) {
+        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_jp
+        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_jp
+        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_jp
+        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_jp
+        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_jp
+        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_jp
         searchInput.placeholder = '検索'
       } else {
         //Set screen labels to EN
-        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en;
-        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en;
-        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en;
-        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en;
-        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en;
-        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en;
+        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en
+        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en
+        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en
+        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en
+        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en
+        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en
         searchInput.placeholder = 'Search'
       }
     },
@@ -110,7 +119,7 @@ export default {
       this.init()
     },
     handleTaskViewed(task) {
-      this.showViewModal = !this.showViewModal;
+      this.showViewModal = !this.showViewModal
       // Set selectedTask when a row is clicked
       this.selectedTask = task
     },
@@ -118,28 +127,50 @@ export default {
       this.showViewModal = false
     },
     startListening() {
-      const recognition = new webkitSpeechRecognition() || new SpeechRecognition(); // Create a new speech recognition instance
-      recognition.lang = 'en-US'; // Set the language
-      // recognition.lang = 'ja-JP'; // Set the language
-      recognition.start(); // Start listening
+      const recognition = new webkitSpeechRecognition() || new SpeechRecognition() // Create a new speech recognition instance
+
+      // Set the language
+      if (this.cbLanguage === false) {
+        console.log('Language set to EN')
+        recognition.lang = 'en-US'
+      } else {
+        console.log('Language set to JP')
+        recognition.lang = 'ja-JP'
+      }
+
+      recognition.start() // Start listening
 
       recognition.onresult = (event) => {
-        let finalTranscript = '';
+        let finalTranscript = ''
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript; // Append the recognized word to the final transcript
+            finalTranscript += event.results[i][0].transcript // Append the recognized word to the final transcript
           }
         }
-        this.transcript = finalTranscript.trim(); // Update the transcript with the final transcript (remove leading/trailing spaces)
-        this.searchInput = this.transcript;
-        this.searchInput = this.searchInput.replace('.', '');
-        this.searchInput = this.searchInput.replace('。', '');
-      };
+        this.transcript = finalTranscript.trim() // Update the transcript with the final transcript (remove leading/trailing spaces)
+        this.searchInput = this.transcript
+        this.searchInput = this.searchInput.replace('.', '')
+        this.searchInput = this.searchInput.replace('。', '')
+      }
 
       recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        recognition.stop(); // Stop listening on error
-      };
+        console.error('Speech recognition error:', event.error)
+        recognition.stop() // Stop listening on error
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    handleTaskViewed(task) {
+      console.log('View task:', task);
+      // Implement your logic for handling task view
     }
   },
   created() {
@@ -148,34 +179,41 @@ export default {
 }
 </script>
 <template>
+  <nav class="navbar">
+    <div class="container mx-auto">
+      <input
+        id="searchInput"
+        class="form-control mr-sm-2 m-2"
+        type="text"
+        placeholder="Search"
+        aria-label="Search"
+        style="width: 70% !important"
+        v-model="searchInput"
+      />
+      <button class="m-2" @click="startListening">
+        <i class="fa-solid fa-microphone-lines"></i>
+      </button>
+      <TaskCreate @task-created="handleTaskCreated" />
+      <div class="button r m-0" id="button-3">
+        <input
+          type="checkbox"
+          class="checkbox"
+          v-model="cbLanguage"
+          @change="handleLanguageChange"
+        />
+        <div class="knobs"></div>
+        <div class="layer"></div>
+      </div>
+    </div>
+  </nav>
   <div class="container">
     <div class="tbl-container table-responsive bdr">
-      <div class="mx-auto d-lg-flex">
-        <input
-          id="searchInput"
-          class="form-control mr-sm-2 m-2"
-          type="text"
-          placeholder="Search"
-          aria-label="Search"
-          style="width: 80% !important"
-          v-model="searchInput"
-        />
-        <button class="m-2" @click="startListening">
-          <i class="fa-solid fa-microphone-lines"></i>
-        </button>
-        <TaskCreate @task-created="handleTaskCreated" />
-        <div class="button r" id="button-3" style="margin-top: 13px">
-          <input type="checkbox" class="checkbox" v-model="cbLanguage" @change="handleLanguageChange">
-          <div class="knobs"></div>
-          <div class="layer"></div>
-        </div>
-      </div>
       <table class="table table-hover">
         <thead class="thead-dark">
           <tr class="table-primary">
             <th scope="col">{{ screenLabels.taskId }}</th>
             <th scope="col">{{ screenLabels.taskTitle }}</th>
-            <th scope="col">{{ screenLabels.taskDesciption }} </th>
+            <th scope="col">{{ screenLabels.taskDesciption }}</th>
             <th scope="col">{{ screenLabels.taskStart_date }}</th>
             <th scope="col">{{ screenLabels.taskEnd_date }}</th>
             <th scope="col">{{ screenLabels.taskStatus }}</th>
@@ -184,10 +222,14 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr  v-for="task in filteredTasks" :key="task.id">
+          <tr v-for="task in paginatedTasks" :key="task.id">
             <td @click="handleTaskViewed(task)">{{ task.id }}</td>
-            <td class="truncate" @click="handleTaskViewed(task)">{{ task.title }}</td>
-            <td class="truncate" @click="handleTaskViewed(task)">{{ task.description }}</td>
+            <td class="truncate" @click="handleTaskViewed(task)" v-tooltip="task.title">
+              {{ task.title }}
+            </td>
+            <td class="truncate" @click="handleTaskViewed(task)" v-tooltip="task.description">
+              {{ task.description }}
+            </td>
             <td @click="handleTaskViewed(task)">{{ task.start_date }}</td>
             <td @click="handleTaskViewed(task)">{{ task.end_date }}</td>
             <td @click="handleTaskViewed(task)">{{ task.status }}</td>
@@ -200,9 +242,21 @@ export default {
           </tr>
         </tbody>
       </table>
+      <!-- Pagination -->
+      <div class="pagination">
+        <!-- Previous page button -->
+        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+        <!-- Display current page and total pages -->
+        <span>{{ currentPage }} / {{ totalPages }}</span>
+        <!-- Next page button -->
+        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      </div>
       <TaskView
-        :viewModalCheck="viewModalCheck" :selectedTask="selectedTask"
-          @task-viewed="handleTaskViewed" @close-modal="closeModal" />
+        :viewModalCheck="viewModalCheck"
+        :selectedTask="selectedTask"
+        @task-viewed="handleTaskViewed"
+        @close-modal="closeModal"
+      />
     </div>
   </div>
 </template>
@@ -364,7 +418,7 @@ table {
 }
 
 #button-3 .knobs:before {
-  content: "EN";
+  content: 'EN';
   position: absolute;
   top: 3px;
   left: 4px;
@@ -391,12 +445,28 @@ table {
 }
 
 #button-3 .checkbox:checked + .knobs:before {
-  content: "JP";
+  content: 'JP';
   left: 42px;
   background-color: #f44336;
 }
 
 #button-3 .checkbox:checked ~ .layer {
   background-color: #fcebeb;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #000;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  top: 100%;
+  left: 0;
+  transform: translateY(5px);
+}
+
+span {
+  cursor: pointer;
+  position: relative;
 }
 </style>
