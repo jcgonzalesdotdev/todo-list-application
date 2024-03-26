@@ -1,4 +1,47 @@
 /**
+ *
+ * Get index of the number from the search input
+ *
+ * @param {*} numberMap
+ * @param {*} word
+ * @param {*} wordsArr
+ * @returns
+ */
+function getIndexOfNumberInSearchInput(numberMap, word, wordsArr) {
+  let numberIndex = null
+  if (numberMap.has(word) || Array.from(numberMap.values()).includes(parseInt(word))) {
+    numberIndex = wordsArr.indexOf(word)
+  }
+  return numberIndex
+}
+
+/**
+ * 
+ * Get converted number for adding days
+ * 
+ * @param {*} numberMap 
+ * @param {*} wordsArr 
+ * @param {*} index 
+ * @returns 
+ */
+function getConvertedNumber(numberMap, wordsArr) {
+
+  let numberIndex = null
+  for (const word of wordsArr) {
+    numberIndex = getIndexOfNumberInSearchInput(
+      numberMap, word, wordsArr)
+      if (numberIndex!== null){
+        break
+      }
+  }
+
+  let convertedNumber = !isNaN(wordsArr[numberIndex])
+    ? parseInt(wordsArr[numberIndex])
+    : numberMap.get(wordsArr[numberIndex])
+  return convertedNumber
+}
+
+/**
  * Convert date string yyyy年MM月dd日 to date YYYY-MM-DD format and vice versa
  * @param {string} dateString - The date string to convert.
  * @param {dateFormatCheck} dateFormatCheck - True = EN, False = JP
@@ -9,15 +52,15 @@ function stringToDate(dateString, dateFormatCheck) {
   console.log('DATE FORMAT CHECK: ', dateFormatCheck)
   if (dateString != '') {
     //True = EN, False = JP
-    if (dateFormatCheck) {
+    if (!dateFormatCheck) {
+      formattedDate = dateString
+    } else {
       let parts = dateString.split(/年|月|日/)
       let date = new Date(parts[0], parts[1] - 1, parts[2])
       // Format the date into YYYY-MM-DD format
       formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
         .toString()
         .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
-    } else {
-      formattedDate = dateString
     }
   }
   return formattedDate
@@ -67,35 +110,10 @@ function convertToEnglishDate(japaneseDateString) {
   return formattedDate
 }
 
-/**
- * 
- * @param { boolean } langFlg, true = JP, false = EN
- * @param { int } noOfDays 
- * @returns formattedDateString
- */
-function daysFilter(langFlg ,noOfDays) {
-  const today = new Date()
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + noOfDays)
-
-  const year = tomorrow.getFullYear()
-  const month = String(tomorrow.getMonth() + 1).padStart(2, '0') // January is 0
-  const day = String(tomorrow.getDate()).padStart(2, '0')
-
-  const date = `${year}-${month}-${day}`
-  let formattedDateString = ''
-  if (langFlg === false) {
-    formattedDateString = date
-  } else {
-    formattedDateString = COMMON_UTILS.convertToJapaneseDate(date)
-  }
-
-  return formattedDateString;
-}
-
 export const COMMON_UTILS = {
   stringToDate,
   convertToJapaneseDate,
   convertToEnglishDate,
-  daysFilter
+  getIndexOfNumberInSearchInput,
+  getConvertedNumber
 }

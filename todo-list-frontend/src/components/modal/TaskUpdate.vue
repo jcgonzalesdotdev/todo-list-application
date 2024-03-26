@@ -108,7 +108,6 @@ export default {
         let stringStartDate = COMMON_UTILS.stringToDate(newVal.start_date, this.updateDateFormatCheck)
         let stringEndDate = COMMON_UTILS.stringToDate(newVal.end_date, this.updateDateFormatCheck)
 
-        console.log(stringStartDate);
 
         this.formData.id = newVal.id
         this.formData.title = newVal.title
