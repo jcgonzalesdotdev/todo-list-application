@@ -42,6 +42,7 @@ export default {
   },
   computed: {
     filteredTasks() {
+      this.currentPage = 1
       if(this.searchInput === ''){
           return this.tasks
       } else {
