@@ -4,9 +4,10 @@ import TaskCreate from './modal/TaskCreate.vue'
 import TaskUpdate from './modal/TaskUpdate.vue'
 import TaskDelete from './modal/TaskDelete.vue'
 import TaskView from './modal/TaskView.vue'
-import TaskHeader from './TaskHeader.vue'
 import { SCREEN_LABELS } from '@/utils/constants'
-import { convertToJapaneseDate, convertToEnglishDate } from '@/utils/common'
+import { SCREEN_MODIFIERS } from '@/utils/screenmodifiers'
+import { COMMON_UTILS } from '@/utils/common'
+
 
 export default {
   name: 'App',
@@ -14,8 +15,7 @@ export default {
     TaskCreate,
     TaskUpdate,
     TaskDelete,
-    TaskView,
-    TaskHeader
+    TaskView
   },
   data() {
     return {
@@ -40,6 +40,9 @@ export default {
   },
   computed: {
     filteredTasks() {
+      if(this.searchInput === ''){
+          return this.tasks
+      } else {
       return this.tasks.filter((task) => {
         // Ensure task is not null or undefined
         if (!task) return false
@@ -52,15 +55,48 @@ export default {
         const status = task.status ? task.status.toString().toLowerCase() : ''
 
         // Check if any of the properties contain the search input
-        return (
-          title.includes(this.searchInput.toLowerCase()) ||
-          description.includes(this.searchInput.toLowerCase()) ||
-          start_date.includes(this.searchInput.toLowerCase()) ||
-          end_date.includes(this.searchInput.toLowerCase()) ||
-          status.includes(this.searchInput.toLowerCase())
-        )
+
+        //custom filter
+        //#1 WHEN START DATE IS TOMORROW
+        if ((this.searchInput.toLowerCase() === 'starts tomorrow' ||
+            this.searchInput.toLowerCase() === 'start tomorrow' || 
+            this.searchInput.toLowerCase() === 'tomorrow starts' || 
+            this.searchInput.toLowerCase() === 'tomorrow start') ||
+          (this.searchInput === '明日から始まる' ||
+          this.searchInput === 'あしたからはじまる' ||
+          this.searchInput === '明日からはじまる' ||
+          this.searchInput === 'あしたから始まる')) {
+
+          console.log('PUMASOK NAMAN????')
+          return start_date.includes(COMMON_UTILS.daysFilter(this.cbLanguage, 1))
+
+          //#2 WHEN START DATE WAS YESTERDAY 
+        } else if ((this.searchInput.toLowerCase() === 'started yesterday' ||
+        this.searchInput.toLowerCase() === 'start yesterday' ||
+        this.searchInput.toLowerCase() === 'yesterday start') ||
+        (this.searchInput === '昨日から始まりました' ||
+        this.searchInput === '昨日から始まった' ||
+        this.searchInput === 'きのうからはじまりました' ||
+        this.searchInput === 'きのうからはじまった' ||
+        this.searchInput === 'きのうから始まりました' ||
+        this.searchInput === '昨日からはじまった' ||
+        this.searchInput === 'きのうから始まった')) {
+
+          return start_date.includes(COMMON_UTILS.daysFilter(this.cbLanguage, -1))
+          
+        } else {
+          //search input conditions
+          return (
+            title.includes(this.searchInput.toLowerCase()) ||
+            description.includes(this.searchInput.toLowerCase()) ||
+            start_date.includes(this.searchInput.toLowerCase()) ||
+            end_date.includes(this.searchInput.toLowerCase()) ||
+            status.includes(this.searchInput.toLowerCase())
+          )
+        }
       })
-    },
+    }
+  },
     viewModalCheck() {
       return this.showViewModal
     },
@@ -76,16 +112,24 @@ export default {
   methods: {
     init() {
       TaskService.init().then((response) => {
-
         //Set response data to tasks[] data
         this.tasks = response.data
         //Set screen labels, default language is EN
-        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en
-        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en
-        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en
-        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en
-        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en
-        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en
+        const searchInput = document.getElementById('searchInput')
+        //If true, set screen labels to JP
+      if (this.cbLanguage === true) {
+        this.screenLabels = SCREEN_MODIFIERS.setScreenLabelsJp(this.screenLabels, SCREEN_LABELS)
+        searchInput.placeholder = SCREEN_LABELS.JP.lbl_search_jp
+
+        this.tasks.forEach((task) => {
+          task.start_date = COMMON_UTILS.convertToJapaneseDate(task.start_date)
+          task.end_date = COMMON_UTILS.convertToJapaneseDate(task.end_date)
+        })
+      } else {
+        //Set screen labels to EN
+        this.screenLabels = SCREEN_MODIFIERS.setScreenLabelsEn(this.screenLabels, SCREEN_LABELS);
+        searchInput.placeholder = SCREEN_LABELS.EN.lbl_search_en
+      }
       })
     },
     handleLanguageChange() {
@@ -93,35 +137,22 @@ export default {
 
       //If true, set screen labels to JP
       if (this.cbLanguage === true) {
-        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_jp
-        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_jp
-        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_jp
-        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_jp
-        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_jp
-        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_jp
-        searchInput.placeholder = SCREEN_LABELS.lbl_search_jp
+        this.screenLabels = SCREEN_MODIFIERS.setScreenLabelsJp(this.screenLabels, SCREEN_LABELS)
+        searchInput.placeholder = SCREEN_LABELS.JP.lbl_search_jp
 
-        this.filteredTasks.forEach(task => {
-        task.start_date = convertToJapaneseDate(task.start_date);
-        task.end_date = convertToJapaneseDate(task.end_date);
-      });
+        this.filteredTasks.forEach((task) => {
+          task.start_date = COMMON_UTILS.convertToJapaneseDate(task.start_date)
+          task.end_date = COMMON_UTILS.convertToJapaneseDate(task.end_date)
+        })
       } else {
         //Set screen labels to EN
-        this.screenLabels.taskId = SCREEN_LABELS.lbl_taskid_en
-        this.screenLabels.taskTitle = SCREEN_LABELS.lbl_title_en
-        this.screenLabels.taskDesciption = SCREEN_LABELS.lbl_description_en
-        this.screenLabels.taskStart_date = SCREEN_LABELS.lbl_start_date_en
-        this.screenLabels.taskEnd_date = SCREEN_LABELS.lbl_end_date_en
-        this.screenLabels.taskStatus = SCREEN_LABELS.lbl_status_en
-        searchInput.placeholder = SCREEN_LABELS.lbl_search_en
-        this.filteredTasks.forEach(task => {
-        task.start_date = convertToEnglishDate(task.start_date);
-        task.end_date = convertToEnglishDate(task.end_date);
-      });
+        this.screenLabels = SCREEN_MODIFIERS.setScreenLabelsEn(this.screenLabels, SCREEN_LABELS);
+        searchInput.placeholder = SCREEN_LABELS.EN.lbl_search_en
+        this.filteredTasks.forEach((task) => {
+          task.start_date = COMMON_UTILS.convertToEnglishDate(task.start_date)
+          task.end_date = COMMON_UTILS.convertToEnglishDate(task.end_date)
+        })
       }
-
-      
-      
     },
     handleTaskUpdated(updatedTask) {
       this.init()
@@ -130,13 +161,12 @@ export default {
       this.init()
     },
     handleTaskDeleted(response) {
-      //TODO: Add notification
       this.init()
     },
     handleTaskViewed(task) {
-      this.showViewModal = !this.showViewModal
       // Set selectedTask when a row is clicked
       this.selectedTask = task
+      this.showViewModal = !this.showViewModal
     },
     closeModal() {
       this.showViewModal = false
@@ -152,17 +182,19 @@ export default {
       } else {
         recognition.lang = 'ja-JP'
       }
-
-      recognition.start() // Start listening
+      // Start listening
+      recognition.start()
 
       recognition.onresult = (event) => {
         let finalTranscript = ''
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript // Append the recognized word to the final transcript
+            // Append the recognized word to the final transcript
+            finalTranscript += event.results[i][0].transcript 
           }
         }
-        this.transcript = finalTranscript.trim() // Update the transcript with the final transcript (remove leading/trailing spaces)
+        // Update the transcript with the final transcript (remove leading/trailing spaces)
+        this.transcript = finalTranscript.trim()
         this.searchInput = this.transcript
         this.searchInput = this.searchInput.replace('.', '')
         this.searchInput = this.searchInput.replace('。', '')
@@ -170,7 +202,8 @@ export default {
 
       recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error)
-        recognition.stop() // Stop listening on error
+        // Stop listening on error
+        recognition.stop()
       }
     },
     nextPage() {
@@ -196,7 +229,6 @@ export default {
         id="searchInput"
         class="form-control mr-sm-2 m-2"
         type="text"
-        placeholder="Search"
         aria-label="Search"
         style="width: 70% !important"
         v-model="searchInput"
@@ -245,7 +277,11 @@ export default {
             <td @click="handleTaskViewed(task)">{{ task.end_date }}</td>
             <td @click="handleTaskViewed(task)">{{ task.status }}</td>
             <td>
-              <TaskUpdate :selectedTask="task" @task-updated="handleTaskUpdated" />
+              <TaskUpdate
+                :selectedTask="task"
+                :dateFormatCheck="cbLanguage"
+                @task-updated="handleTaskUpdated"
+              />
             </td>
             <td>
               <TaskDelete :taskId="task.id" @task-deleted="handleTaskDeleted" />
@@ -265,7 +301,6 @@ export default {
       <TaskView
         :viewModalCheck="viewModalCheck"
         :selectedTask="selectedTask"
-        @task-viewed="handleTaskViewed"
         @close-modal="closeModal"
       />
     </div>

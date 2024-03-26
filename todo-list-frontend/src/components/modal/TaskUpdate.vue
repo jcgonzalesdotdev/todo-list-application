@@ -63,14 +63,14 @@
 <script>
 import TaskService from '@/service/TaskService'
 import TaskModal from './TaskModal.vue'
-import { stringToDate } from '@/utils/common'
+import { COMMON_UTILS } from '@/utils/common'
 
 export default {
   components: {
     TaskService,
     TaskModal
   },
-  props: ['selectedTask'], // Receive selected task from parent component
+  props: ['selectedTask', 'dateFormatCheck'], // Receive selected task from parent component
   data() {
     return {
       formData: {
@@ -80,6 +80,7 @@ export default {
         end_date: '',
         status: ''
       },
+      updateDateFormatCheck: false,
       modalActive: true
     }
   },
@@ -95,6 +96,7 @@ export default {
     async updateTask() {
       await TaskService.updateTask(this.formData).then((response) => {
         this.$emit('task-updated', response.data)
+        console.log(response.data)
         this.modalActive = !this.modalActive
       })
     }
@@ -103,8 +105,10 @@ export default {
     selectedTask: {
       handler(newVal) {
         // Update formData when selectedTask changes
-        let stringStartDate = stringToDate(newVal.start_date)
-        let stringEndDate = stringToDate(newVal.end_date)
+        let stringStartDate = COMMON_UTILS.stringToDate(newVal.start_date, this.updateDateFormatCheck)
+        let stringEndDate = COMMON_UTILS.stringToDate(newVal.end_date, this.updateDateFormatCheck)
+
+        console.log(stringStartDate);
 
         this.formData.id = newVal.id
         this.formData.title = newVal.title
@@ -113,7 +117,13 @@ export default {
         this.formData.end_date = stringEndDate
         this.formData.status = newVal.status
       },
-      immediate: true // Trigger on component mount
+      // Trigger on component mount
+      immediate: true
+    },
+    dateFormatCheck: {
+      handler(newVal)  {
+        this.updateDateFormatCheck = newVal
+      }
     }
   }
 }
