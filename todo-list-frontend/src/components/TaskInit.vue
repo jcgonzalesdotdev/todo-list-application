@@ -1,3 +1,4 @@
+
 <script>
 import TaskService from '../service/TaskService'
 import TaskCreate from './modal/TaskCreate.vue'
@@ -7,7 +8,7 @@ import TaskView from './modal/TaskView.vue'
 import { SCREEN_LABELS } from '@/utils/constants'
 import { SCREEN_MODIFIERS } from '@/utils/screenmodifiers'
 import { COMMON_UTILS } from '@/utils/common'
-
+// import micSvg from '@/assets/images/circle-microphone.svg'
 
 export default {
   name: 'App',
@@ -15,7 +16,8 @@ export default {
     TaskCreate,
     TaskUpdate,
     TaskDelete,
-    TaskView
+    TaskView,
+    // micSvg,
   },
   data() {
     return {
@@ -224,17 +226,18 @@ export default {
 </script>
 <template>
   <nav class="navbar">
-    <div class="container mx-auto">
+    <div class="container mx-6">
       <input
         id="searchInput"
-        class="form-control mr-sm-2 m-2"
+        class="form-control mr-sm-2 search-input"
         type="text"
         aria-label="Search"
         style="width: 70% !important"
         v-model="searchInput"
       />
-      <button class="m-2" @click="startListening">
-        <i class="fa-solid fa-microphone-lines"></i>
+      <button class="general-button d-flex align-items-center" @click="startListening">
+        <!-- <i class="fi fi-rs-circle-microphone"></i> -->
+        <i class='bx bx-microphone size-icon'></i>
       </button>
       <TaskCreate @task-created="handleTaskCreated" />
       <div class="button r m-0" id="button-3">
@@ -251,7 +254,7 @@ export default {
   </nav>
   <div class="container">
     <div class="tbl-container table-responsive bdr">
-      <table class="table table-hover">
+      <table class="table task-table table-hover">
         <thead class="thead-dark">
           <tr class="table-primary">
             <th scope="col">{{ screenLabels.taskId }}</th>
@@ -292,11 +295,15 @@ export default {
       <!-- Pagination -->
       <div class="pagination">
         <!-- Previous page button -->
-        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+        <button class="general-button" @click="prevPage" :disabled="currentPage === 1">
+          <i class='bx bx-chevron-left'></i>
+        </button>
         <!-- Display current page and total pages -->
-        <span>{{ currentPage }} / {{ totalPages }}</span>
+        <span>&nbsp;{{ currentPage }}  /  {{ totalPages }}&nbsp;</span>
         <!-- Next page button -->
-        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+        <button class="general-button" @click="nextPage" :disabled="currentPage === totalPages">
+          <i class='bx bx-chevron-right'></i>
+        </button>
       </div>
       <TaskView
         :viewModalCheck="viewModalCheck"
@@ -313,7 +320,7 @@ export default {
   z-index: 2;
 }
 
-button {
+.general-button {
   appearance: none;
   background-color: transparent;
   border: 0.125em solid #1a1a1a;
@@ -331,7 +338,7 @@ button {
   min-height: 3.75em;
   min-width: 0;
   outline: none;
-  padding: 1em 2.3em;
+  padding: 1em 1.5em;
   text-align: center;
   text-decoration: none;
   transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
@@ -341,25 +348,26 @@ button {
   will-change: transform;
 }
 
-button:disabled {
+.general-button:disabled {
   pointer-events: none;
 }
 
-button:hover {
+.general-button:hover {
   color: #fff;
   background-color: #1a1a1a;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
   transform: translateY(-2px);
 }
 
-button:active {
+.general-button:active {
   box-shadow: none;
   transform: translateY(0);
 }
 
-table {
+.task-table {
   margin-top: 2em;
   font-family: monospace;
+  box-shadow: 30px 30px 15px -6px rgba(0,0,0,0.1),0px 10px 15px -3px rgba(0,0,0,0.1);
 }
 
 .bdr {
@@ -514,5 +522,19 @@ table {
 span {
   cursor: pointer;
   position: relative;
+}
+
+.size-icon{
+  font-size: xx-large;
+}
+
+.search-input{
+  height: 3.75em;
+}
+
+.pagination{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

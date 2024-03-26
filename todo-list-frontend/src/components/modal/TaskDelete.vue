@@ -1,6 +1,6 @@
 <template>
     <div>
-      <button class="m-2" @click.stop="modalCheck"><i class="fa-solid fa-trash-can"></i></button>
+      <button class="general-button" @click.stop="modalCheck"><i class="fa-solid fa-trash-can size-icon-md"></i></button>
       <TaskModal :modalActive="isModalActive" @close-modal="modalCheck">
         <div>
           <p>Are you sure you want to delete this task?</p>
@@ -168,6 +168,10 @@ textarea {
 .checkbox-wrapper .check:checked + label svg g path {
   stroke-dashoffset: 0;
   opacity: 1;
+}
+
+.size-icon-md{
+  font-size: medium;
 }
 </style>
   

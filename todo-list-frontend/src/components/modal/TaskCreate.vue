@@ -1,7 +1,8 @@
 <template>
   <div>
-    <button class="m-2" @click="modalCheck">
-      <i class="fa-solid fa-square-plus"></i>
+    <button class="general-button" @click="modalCheck">
+      <!-- <i class="fa-solid fa-square-plus size-icon"></i> -->
+      <i class='bx bx-add-to-queue size-icon'></i>
     </button>
     <TaskModal :modalActive="isModalActive" @close-modal="modalCheck">
             <form>
@@ -214,5 +215,9 @@ textarea {
 .checkbox-wrapper .check:checked + label svg g path {
   stroke-dashoffset: 0;
   opacity: 1;
+}
+
+.size-icon{
+  font-size: x-large;
 }
 </style>
